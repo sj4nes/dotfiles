@@ -4,6 +4,7 @@ vim.g.mapleader = " "
 options = { noremap = true }
 vim.api.nvim_set_keymap("n", "<leader>b", ":Telescope buffers<cr>", options)
 vim.api.nvim_set_keymap("n", "<leader>f", ":Telescope find_files<cr>", options)
+vim.api.nvim_set_keymap("n", "<leader>F", ":Telescope find_files hidden=true<cr>", options)
 vim.api.nvim_set_keymap("n", "<leader>n", ":nohlsearch<cr>", options)
 vim.api.nvim_set_keymap("n", "<leader>g", ":Neogit<cr>", options)
 vim.api.nvim_set_keymap("n", "<leader>!", ":BaconLoad<CR>:w<CR>:BaconNext<CR>", options)
