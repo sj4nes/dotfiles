@@ -2,13 +2,14 @@ local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 require("opts")
 vim.g.mapleader = " "
 options = { noremap = true }
-vim.api.nvim_set_keymap("n", "<leader>b", ":Telescope buffers<cr>", options)
-vim.api.nvim_set_keymap("n", "<leader>f", ":Telescope find_files<cr>", options)
-vim.api.nvim_set_keymap("n", "<leader>F", ":Telescope find_files hidden=true<cr>", options)
-vim.api.nvim_set_keymap("n", "<leader>n", ":nohlsearch<cr>", options)
-vim.api.nvim_set_keymap("n", "<leader>g", ":Neogit<cr>", options)
 vim.api.nvim_set_keymap("n", "<leader>!", ":BaconLoad<CR>:w<CR>:BaconNext<CR>", options)
 vim.api.nvim_set_keymap("n", "<leader>,", ":BaconList<CR>", options)
+vim.api.nvim_set_keymap("n", "<leader>F", ":Telescope find_files hidden=true<cr>", options)
+vim.api.nvim_set_keymap("n", "<leader>b", ":Telescope buffers<cr>", options)
+vim.api.nvim_set_keymap("n", "<leader>f", ":Telescope find_files<cr>", options)
+vim.api.nvim_set_keymap("n", "<leader>g", ":Neogit<cr>", options)
+vim.api.nvim_set_keymap("n", "<leader>n", ":nohlsearch<cr>", options)
+vim.api.nvim_set_keymap("n", "<leader>o", ":ObsidianQuickSwitch<cr>", options)
 
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
 	vim.fn.system({
@@ -22,6 +23,38 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 local plugins = {
+	{
+		"epwalsh/obsidian.nvim",
+		version = "*", -- recommended, use latest release instead of latest commit
+		lazy = true,
+		ft = "markdown",
+		-- Replace the above line with this if you only want to load obsidian.nvim for markdown files in your vault:
+		-- event = {
+		--   -- If you want to use the home shortcut '~' here you need to call 'vim.fn.expand'.
+		--   -- E.g. "BufReadPre " .. vim.fn.expand "~" .. "/my-vault/**.md"
+		--   "BufReadPre path/to/my-vault/**.md",
+		--   "BufNewFile path/to/my-vault/**.md",
+		-- },
+		dependencies = {
+			-- Required.
+			"nvim-lua/plenary.nvim",
+
+			-- see below for full list of optional dependencies 👇
+			"nvim-telescope/telescope.nvim",
+			"nvim-treesitter/nvim-treesitter",
+			"epwalsh/pomo.nvim",
+		},
+		opts = {
+			workspaces = {
+				{
+					name = "pro",
+					path = "~/Documents/V2023",
+				},
+			},
+
+			-- see below for full list of options 👇
+		},
+	},
 	{
 		"christoomey/vim-tmux-navigator",
 		cmd = {
@@ -39,7 +72,7 @@ local plugins = {
 			{ "<c-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>" },
 		},
 	},
-	{'akinsho/bufferline.nvim', version = "*", dependencies = 'nvim-tree/nvim-web-devicons'},
+	{ "akinsho/bufferline.nvim", version = "*", dependencies = "nvim-tree/nvim-web-devicons" },
 	{ "github/copilot.vim" },
 	{ "Canop/nvim-bacon" },
 	{
@@ -165,3 +198,13 @@ require("formatter").setup({
 })
 
 vim.cmd("colorscheme catppuccin-mocha")
+require("obsidian").setup({
+	workspaces = {
+		{
+			name = "pro",
+			path = "~/Documents/V2023",
+		},
+	},
+
+	-- see below for full list of options 👇
+})

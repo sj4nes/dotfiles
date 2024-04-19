@@ -173,3 +173,4 @@ cdj() {
     __zoxide_z ~/Documents/JD/*/*/${1}*
 }
 export PATH=$PATH:~/bin
+neofetch
