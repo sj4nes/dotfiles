@@ -7,6 +7,7 @@ vim.api.nvim_set_keymap("n", "<leader>,", ":BaconList<CR>", options)
 vim.api.nvim_set_keymap("n", "<leader>F", ":Telescope find_files hidden=true<cr>", options)
 vim.api.nvim_set_keymap("n", "<leader>b", ":Telescope buffers<cr>", options)
 vim.api.nvim_set_keymap("n", "<leader>f", ":Telescope find_files<cr>", options)
+vim.api.nvim_set_keymap("n", "<leader>l", ":Telescope live_grep<cr>", options)
 vim.api.nvim_set_keymap("n", "<leader>g", ":Neogit<cr>", options)
 vim.api.nvim_set_keymap("n", "<leader>n", ":nohlsearch<cr>", options)
 vim.api.nvim_set_keymap("n", "<leader>o", ":ObsidianQuickSwitch<cr>", options)
@@ -43,6 +44,7 @@ local plugins = {
 			"nvim-telescope/telescope.nvim",
 			"nvim-treesitter/nvim-treesitter",
 			"epwalsh/pomo.nvim",
+			"hrsh7th/nvim-cmp",
 		},
 		opts = {
 			workspaces = {
@@ -198,6 +200,7 @@ require("formatter").setup({
 })
 
 vim.cmd("colorscheme catppuccin-mocha")
+vim.cmd("set autoread | au CursorHold * checktime | call feedkeys('lh')")
 require("obsidian").setup({
 	workspaces = {
 		{
@@ -252,4 +255,37 @@ require("pomo").setup({
 			{ name = "System" },
 		},
 	},
+})
+local cmp = require("cmp")
+cmp.setup({
+	snippet = {
+		-- REQUIRED - you must specify a snippet engine
+		expand = function(args)
+			-- vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+			-- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+			-- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+			-- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+			vim.snippet.expand(args.body) -- For native neovim snippets (Neovim v0.10+)
+		end,
+	},
+	window = {
+		-- completion = cmp.config.window.bordered(),
+		-- documentation = cmp.config.window.bordered(),
+	},
+	mapping = cmp.mapping.preset.insert({
+		["<C-b>"] = cmp.mapping.scroll_docs(-4),
+		["<C-f>"] = cmp.mapping.scroll_docs(4),
+		["<C-.>"] = cmp.mapping.complete(),
+		["<C-e>"] = cmp.mapping.abort(),
+		["<CR>"] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+	}),
+	sources = cmp.config.sources({
+		{ name = "nvim_lsp" },
+		{ name = "vsnip" }, -- For vsnip users.
+		-- { name = 'luasnip' }, -- For luasnip users.
+		-- { name = 'ultisnips' }, -- For ultisnips users.
+		-- { name = 'snippy' }, -- For snippy users.
+	}, {
+		{ name = "buffer" },
+	}),
 })
