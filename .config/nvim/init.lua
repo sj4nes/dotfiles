@@ -25,6 +25,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 local plugins = {
 	{ "vlime/vlime" },
+	{ "kovisoft/paredit" },
 	{ "mattn/emmet-vim" },
 	{
 		"epwalsh/obsidian.nvim",
