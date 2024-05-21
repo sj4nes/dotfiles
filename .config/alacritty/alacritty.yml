@@ -1,0 +1,17 @@
+font:
+  normal:
+    family: &font Monaspace Argon Var
+
+  bold:
+    family: *font
+    style: Bold
+
+  italic:
+    family: *font
+    style: Italic
+
+  bold_italic:
+    family: *font
+    style: Bold Italic
+
+  size: 19

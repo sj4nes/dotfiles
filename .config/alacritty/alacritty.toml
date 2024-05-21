@@ -1,0 +1,17 @@
+[font]
+size = 19
+
+[font.bold]
+family = "Monaspace Argon Var"
+style = "Bold"
+
+[font.bold_italic]
+family = "Monaspace Argon Var"
+style = "Bold Italic"
+
+[font.italic]
+family = "Monaspace Argon Var"
+style = "Italic"
+
+[font.normal]
+family = "Monaspace Argon Var"
