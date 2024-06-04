@@ -102,7 +102,7 @@ source $ZSH/oh-my-zsh.sh
 source <(/Users/sjanes/.cargo/bin/starship init zsh --print-full-init)
 source /Users/sjanes/.config/broot/launcher/bash/br
 git config --global alias.slog 'log --pretty=oneline --abbrev-commit'
-export EDITOR=hx
+export EDITOR=nvim
 
 export GOPATH=~/go
 export TERM=xterm-256color
@@ -171,6 +171,10 @@ eval "$(atuin init zsh)"
 cdj() {
     # Update with your document root folder
     __zoxide_z ~/Documents/JD/*/*/${1}*
+}
+cdc() {
+    # Update with your document root folder
+    __zoxide_z ~/Documents/JD/*/${1}*
 }
 export PATH=$PATH:~/bin
 neofetch
