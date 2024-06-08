@@ -1,6 +1,7 @@
 {
   "bufferline.nvim": { "branch": "main", "commit": "f4b4b980ce88d546aeb69d11463187c8f716a1a1" },
   "catppuccin": { "branch": "main", "commit": "d97387aea8264f484bb5d5e74f2182a06c83e0d8" },
+  "codesnap.nvim": { "branch": "main", "commit": "a223fd882953e56ae1a8747fdc44b8d6a2ff7a9b" },
   "copilot.vim": { "branch": "release", "commit": "dfa657c80c915a6a3eb6d9010046a0576ad25a37" },
   "diffview.nvim": { "branch": "main", "commit": "3dc498c9777fe79156f3d32dddd483b8b3dbd95f" },
   "emmet-vim": { "branch": "master", "commit": "def5d57a1ae5afb1b96ebe83c4652d1c03640f4d" },
