@@ -135,7 +135,12 @@ local plugins = {
 	{ "catppuccin/nvim", name = "catppuccin", priority = 1000 },
 	{
 		"stevearc/oil.nvim",
-		opts = {},
+		columns = {
+			"icon",
+		},
+		opts = {
+
+		},
 		-- Optional dependencies
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 	},
@@ -223,7 +228,7 @@ require("formatter").setup({
 	},
 })
 
-vim.cmd("colorscheme catppuccin-mocha")
+vim.cmd("colorscheme catppuccin")
 vim.cmd("set autoread | au CursorHold * checktime | call feedkeys('lh')")
 require("obsidian").setup({
 	workspaces = {
