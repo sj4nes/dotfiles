@@ -177,4 +177,5 @@ cdc() {
     __zoxide_z ~/Documents/JD/*/${1}*
 }
 export PATH=$PATH:~/bin
+export PATH=$PATH:~/.config/emacs/bin
 neofetch
