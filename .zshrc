@@ -179,3 +179,9 @@ cdc() {
 export PATH=$PATH:~/bin
 export PATH=$PATH:~/.config/emacs/bin
 neofetch
+
+# Created by `pipx` on 2024-06-23 05:13:06
+export PATH="$PATH:/Users/sjanes/.local/bin"
+if [ -f "/Users/sjanes/.config/fabric/fabric-bootstrap.inc" ]; then . "/Users/sjanes/.config/fabric/fabric-bootstrap.inc"; fi
+
+alias fzn="nvim \$(fzf -m --preview 'bat --color=always --style=header,grid --line-range :500 {}' --preview-window=right:70%:wrap)"
