@@ -1,0 +1,6 @@
+eval %sh{
+        kak-lsp --config /usr/local/etc/kakoune-lsp/kak-lsp.toml \
+                --kakoune \
+                -s $kak_session
+}
+lsp-enable
