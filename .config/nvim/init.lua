@@ -10,7 +10,7 @@ vim.api.nvim_set_keymap("n", "<leader>f", ":Telescope find_files<cr>", options)
 vim.api.nvim_set_keymap("n", "<leader>g", ":Neogit<cr>", options)
 vim.api.nvim_set_keymap("n", "<leader>l", ":Telescope live_grep<cr>", options)
 vim.api.nvim_set_keymap("n", "<leader>n", ":nohlsearch<cr>", options)
-vim.api.nvim_set_keymap("n", "<leader>o", ":ObsidianQuickSwitch<cr>", options)
+-- vim.api.nvim_set_keymap("n", "<leader>o", ":ObsidianQuickSwitch<cr>", options)
 
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
 	vim.fn.system({
@@ -48,39 +48,6 @@ local plugins = {
 	{ "vlime/vlime" },
 	{ "kovisoft/paredit" },
 	{ "mattn/emmet-vim" },
-	{
-		"epwalsh/obsidian.nvim",
-		version = "*", -- recommended, use latest release instead of latest commit
-		lazy = true,
-		ft = "markdown",
-		-- Replace the above line with this if you only want to load obsidian.nvim for markdown files in your vault:
-		-- event = {
-		--   -- If you want to use the home shortcut '~' here you need to call 'vim.fn.expand'.
-		--   -- E.g. "BufReadPre " .. vim.fn.expand "~" .. "/my-vault/**.md"
-		--   "BufReadPre path/to/my-vault/**.md",
-		--   "BufNewFile path/to/my-vault/**.md",
-		-- },
-		dependencies = {
-			-- Required.
-			"nvim-lua/plenary.nvim",
-
-			-- see below for full list of optional dependencies 👇
-			"nvim-telescope/telescope.nvim",
-			"nvim-treesitter/nvim-treesitter",
-			"epwalsh/pomo.nvim",
-			"hrsh7th/nvim-cmp",
-		},
-		opts = {
-			workspaces = {
-				{
-					name = "pro",
-					path = "~/Documents/V2023",
-				},
-			},
-
-			-- see below for full list of options 👇
-		},
-	},
 	{
 		"christoomey/vim-tmux-navigator",
 		cmd = {
@@ -230,91 +197,5 @@ require("formatter").setup({
 
 vim.cmd("colorscheme catppuccin")
 vim.cmd("set autoread | au CursorHold * checktime | call feedkeys('lh')")
-require("obsidian").setup({
-	workspaces = {
-		{
-			name = "pro",
-			path = "~/Documents/V2023",
-		},
-	},
 
-	-- see below for full list of options 👇
-})
-require("pomo").setup({
-	-- How often the notifiers are updated.
-	update_interval = 1000,
 
-	-- Configure the default notifiers to use for each timer.
-	-- You can also configure different notifiers for timers given specific names, see
-	-- the 'timers' field below.
-	notifiers = {
-		-- The "Default" notifier uses 'vim.notify' and works best when you have 'nvim-notify' installed.
-		{
-			name = "Default",
-			opts = {
-				-- With 'nvim-notify', when 'sticky = true' you'll have a live timer pop-up
-				-- continuously displayed. If you only want a pop-up notification when the timer starts
-				-- and finishes, set this to false.
-				sticky = true,
-
-				-- Configure the display icons:
-				title_icon = "󱎫",
-				text_icon = "󰄉",
-				-- Replace the above with these if you don't have a patched font:
-				-- title_icon = "⏳",
-				-- text_icon = "⏱️",
-			},
-		},
-
-		-- The "System" notifier sends a system notification when the timer is finished.
-		-- Available on MacOS natively and Linux via the `libnotify-bin` package.
-		-- Tracking: https://github.com/epwalsh/pomo.nvim/issues/3
-		{ name = "System" },
-
-		-- You can also define custom notifiers by providing an "init" function instead of a name.
-		-- See "Defining custom notifiers" below for an example 👇
-		-- { init = function(timer) ... end }
-	},
-
-	-- Override the notifiers for specific timer names.
-	timers = {
-		-- For example, use only the "System" notifier when you create a timer called "Break",
-		-- e.g. ':TimerStart 2m Break'.
-		Break = {
-			{ name = "System" },
-		},
-	},
-})
-local cmp = require("cmp")
-cmp.setup({
-	snippet = {
-		-- REQUIRED - you must specify a snippet engine
-		expand = function(args)
-			-- vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-			-- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
-			-- require('snippy').expand_snippet(args.body) -- For `snippy` users.
-			-- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
-			vim.snippet.expand(args.body) -- For native neovim snippets (Neovim v0.10+)
-		end,
-	},
-	window = {
-		-- completion = cmp.config.window.bordered(),
-		-- documentation = cmp.config.window.bordered(),
-	},
-	mapping = cmp.mapping.preset.insert({
-		["<C-b>"] = cmp.mapping.scroll_docs(-4),
-		["<C-f>"] = cmp.mapping.scroll_docs(4),
-		["<C-.>"] = cmp.mapping.complete(),
-		["<C-e>"] = cmp.mapping.abort(),
-		["<CR>"] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-	}),
-	sources = cmp.config.sources({
-		{ name = "nvim_lsp" },
-		{ name = "vsnip" }, -- For vsnip users.
-		-- { name = 'luasnip' }, -- For luasnip users.
-		-- { name = 'ultisnips' }, -- For ultisnips users.
-		-- { name = 'snippy' }, -- For snippy users.
-	}, {
-		{ name = "buffer" },
-	}),
-})
