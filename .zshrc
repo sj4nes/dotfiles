@@ -2,7 +2,7 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/Users/sjanes/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -134,7 +134,7 @@ alias mp="mkdir -p"
 # Wasmer
 export WASMER_DIR="/Users/sjanes/.wasmer"
 [ -s "$WASMER_DIR/wasmer.sh" ] && source "$WASMER_DIR/wasmer.sh"
-eval "$(direnv hook bash)"
+eval "$(direnv hook zsh)"
 
 export CPLUS_INCLUDE_PATH=/opt/homebrew/Cellar/boost/1.79.0_2/include/
 
@@ -153,19 +153,6 @@ export PLAN9=/Users/sjanes/tmp/plan9
 export PATH=$PATH:$PLAN9/bin
 
 
-_direnv_hook() {
-  trap -- '' SIGINT;
-  eval "$("/opt/homebrew/bin/direnv" export zsh)";
-  trap - SIGINT;
-}
-typeset -ag precmd_functions;
-if [[ -z "${precmd_functions[(r)_direnv_hook]+1}" ]]; then
-  precmd_functions=( _direnv_hook ${precmd_functions[@]} )
-fi
-typeset -ag chpwd_functions;
-if [[ -z "${chpwd_functions[(r)_direnv_hook]+1}" ]]; then
-  chpwd_functions=( _direnv_hook ${chpwd_functions[@]} )
-fi
 eval "$(zoxide init zsh)"
 eval "$(atuin init zsh)"
 cdj() {
