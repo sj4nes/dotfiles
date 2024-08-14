@@ -3,7 +3,10 @@ if [ $(id -nu) != "root" ]; then
 	exit
 fi
 
-PKGS=( jujutsu couchdb3 go fzf inkscape zathura zathura-pdf zathura-cb zathura-djvu sbcl zig syncthing drm-kmod cmake git neovim tmux rust victor-mono-ttf lagrange chromium firefox zoxide kakoune sway swayidle swaylock-effects alacritty kitty dmenu-wayland dmenu wmenu )
+PKGS=( graphviz protobuf direnv zsh jujutsu couchdb3 go fzf inkscape zathura zathura-pdf zathura-cb
+zathura-djvu sbcl zig syncthing drm-kmod cmake git neovim tmux rust
+victor-mono-ttf lagrange chromium firefox zoxide kakoune sway swayidle
+swaylock-effects kitty dmenu-wayland dmenu wmenu )
 
 for pkg in "${PKGS[@]}"; do
 	echo "*** $pkg";
@@ -11,4 +14,6 @@ for pkg in "${PKGS[@]}"; do
 done
 
 pw groupmod video -m sjanes
+sysrc seatd_enable="YES"
+service seatd start
 sysrc kld_list+=i915kms
