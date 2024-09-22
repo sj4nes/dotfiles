@@ -106,7 +106,7 @@ export EDITOR=nvim
 
 export GOPATH=~/go
 export TERM=xterm-256color
-export PATH=$PATH:~/.emacs.d/bin
+export PATH=$PATH:~/.emacs.d/bin:~/go/bin
 export AWS_DEFAULT_REGION=us-east-2
 awsunlock() {
     export AWS_ACCESS_KEY_ID="$(pass aws/aws-root-api | head -1)"
@@ -118,7 +118,6 @@ awslock() {
     unset AWS_SECRET_ACCESS_KEY
 }
 
-
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
@@ -128,9 +127,6 @@ export PATH=$PATH:/opt/local/bin:/opt/local/sbin
 export TERMINAL=kitty
 alias mp="mkdir -p"
 
-# opam configuration
-[[ ! -r /Users/sjanes/.opam/opam-init/init.zsh ]] || source /Users/sjanes/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
-
 # Wasmer
 export WASMER_DIR="/Users/sjanes/.wasmer"
 [ -s "$WASMER_DIR/wasmer.sh" ] && source "$WASMER_DIR/wasmer.sh"
@@ -138,20 +134,12 @@ eval "$(direnv hook bash)"
 
 export CPLUS_INCLUDE_PATH=/opt/homebrew/Cellar/boost/1.79.0_2/include/
 
-# bun completions
-[ -s "/Users/sjanes/.bun/_bun" ] && source "/Users/sjanes/.bun/_bun"
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-
 source /Users/sjanes/.docker/init-zsh.sh || true # Added by Docker Desktop
       
 export cdj
 export PATH="/opt/homebrew/bin:/opt/homebrew/opt/postgresql@15/bin:$PATH"
 export PLAN9=/Users/sjanes/tmp/plan9
 export PATH=$PATH:$PLAN9/bin
-
 
 _direnv_hook() {
   trap -- '' SIGINT;
@@ -178,10 +166,18 @@ cdc() {
 }
 export PATH=$PATH:~/bin
 export PATH=$PATH:~/.config/emacs/bin
-neofetch
 
 # Created by `pipx` on 2024-06-23 05:13:06
 export PATH="$PATH:/Users/sjanes/.local/bin"
 if [ -f "/Users/sjanes/.config/fabric/fabric-bootstrap.inc" ]; then . "/Users/sjanes/.config/fabric/fabric-bootstrap.inc"; fi
 
 alias fzn="nvim \$(fzf -m --preview 'bat --color=always --style=header,grid --line-range :500 {}' --preview-window=right:70%:wrap)"
+
+# Load pyenv automatically by appending
+# the following to
+# ~/.zprofile (for login shells)
+# and ~/.zshrc (for interactive shells) :
+
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"

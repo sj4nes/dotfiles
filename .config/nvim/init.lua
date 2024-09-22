@@ -3,7 +3,7 @@ require("opts")
 vim.g.mapleader = " "
 options = { noremap = true }
 vim.api.nvim_set_keymap("n", "<leader>!", ":BaconLoad<CR>:w<CR>:BaconNext<CR>", options)
-vim.api.nvim_set_keymap("n", "<leader>,", ":BaconList<CR>", options)
+vim.api.nvim_set_keymap("n", "<leader>,", ":BaconLoad<CR>:BaconList<CR>", options)
 vim.api.nvim_set_keymap("n", "<leader>F", ":Telescope find_files hidden=true<cr>", options)
 vim.api.nvim_set_keymap("n", "<leader>b", ":Telescope buffers<cr>", options)
 vim.api.nvim_set_keymap("n", "<leader>f", ":Telescope find_files<cr>", options)
@@ -24,6 +24,81 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 local plugins = {
+	{
+		'VonHeikemen/lsp-zero.nvim',
+		branch = 'v4.x',
+		lazy = true,
+		config = false,
+	},
+
+	-- Autocompletion
+	{
+		'hrsh7th/nvim-cmp',
+		event = 'InsertEnter',
+		dependencies = {
+			{'L3MON4D3/LuaSnip'},
+		},
+		config = function()
+			local cmp = require('cmp')
+
+			cmp.setup({
+				sources = {
+					{name = 'nvim_lsp'},
+				},
+				mapping = cmp.mapping.preset.insert({
+					['<C-Space>'] = cmp.mapping.complete(),
+					['<C-u>'] = cmp.mapping.scroll_docs(-4),
+					['<C-d>'] = cmp.mapping.scroll_docs(4),
+				}),
+				snippet = {
+					expand = function(args)
+						vim.snippet.expand(args.body)
+					end,
+				},
+			})
+		end
+	},
+
+	-- LSP
+	{
+		'neovim/nvim-lspconfig',
+		cmd = 'LspInfo',
+		event = {'BufReadPre', 'BufNewFile'},
+		dependencies = {
+			{'hrsh7th/cmp-nvim-lsp'},
+		},
+		config = function()
+			local lsp_zero = require('lsp-zero')
+
+			-- lsp_attach is where you enable features that only work
+			-- if there is a language server active in the file
+			local lsp_attach = function(client, bufnr)
+				local opts = {buffer = bufnr}
+
+				vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
+				vim.keymap.set('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
+				vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
+				vim.keymap.set('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
+				vim.keymap.set('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
+				vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
+				vim.keymap.set('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
+				vim.keymap.set('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
+				vim.keymap.set({'n', 'x'}, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
+				vim.keymap.set('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
+			end
+
+			lsp_zero.extend_lspconfig({
+				sign_text = true,
+				lsp_attach = lsp_attach,
+				capabilities = require('cmp_nvim_lsp').default_capabilities()
+			})
+
+			-- These are just examples. Replace them with the language
+			-- servers you have installed in your system
+			require('lspconfig').gleam.setup({})
+			require('lspconfig').ocamllsp.setup({})
+		end
+	},
 	{
 		"mistricky/codesnap.nvim",
 		build = "make",
@@ -106,14 +181,14 @@ local plugins = {
 		event = "VeryLazy",
 		---@type Flash.Config
 		opts = {},
-  -- stylua: ignore
-  keys = {
-    { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
-    { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
-    { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
-    { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
-    { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
-  },
+		-- stylua: ignore
+		keys = {
+			{ "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
+			{ "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
+			{ "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
+			{ "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+			{ "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
+		},
 	},
 	{
 		"NeogitOrg/neogit",
@@ -162,11 +237,7 @@ local plugins = {
 			-- refer to the configuration section below
 		},
 	},
-	{
-		"mrcjkb/rustaceanvim",
-		version = "^4", -- Recommended
-		ft = { "rust" },
-	},
+	-- { "mrcjkb/rustaceanvim", version = "^5", -- Recommended lazy = false, ft = { "rust" }, },
 }
 require("lazy").setup(plugins, opts)
 require("oil").setup()
@@ -318,3 +389,54 @@ cmp.setup({
 		{ name = "buffer" },
 	}),
 })
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+require('nvim-treesitter.configs').setup({
+    ensure_installed = "yaml",
+    highlight = {
+        enable = true,
+    },
+    indent = {
+        enable = true,
+    },
+})
+
+local bufnr = vim.api.nvim_get_current_buf()
+vim.keymap.set(
+  "n", 
+  "<leader>a", 
+  function()
+    vim.cmd.RustLsp('codeAction') -- supports rust-analyzer's grouping
+    -- or vim.lsp.buf.codeAction() if you don't want grouping.
+  end,
+  { silent = true, buffer = bufnr }
+)
+
+vim.g.neovide_scale_factor = 1.0
+local change_scale_factor = function(delta)
+  vim.g.neovide_scale_factor = vim.g.neovide_scale_factor * delta
+end
+vim.keymap.set("n", "<C-=>", function()
+  change_scale_factor(1.25)
+end)
+vim.keymap.set("n", "<C-->", function()
+  change_scale_factor(1/1.25)
+end)
+
+lsp = require('lsp-zero')
+
+lsp.configure('rust_analyzer', {
+    settings = {
+        ["rust-analyzer"] = {
+            inlayHints = {
+                enable = true,
+                showParameterNames = true,
+                parameterHintsPrefix = "<- ",
+                otherHintsPrefix = "=> ",
+            },
+        },
+    },
+})
+
+lsp.setup()
+
