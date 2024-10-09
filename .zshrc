@@ -1,14 +1,14 @@
 # If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
+# export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
 
-# Path to your oh-my-zsh installation.
-export ZSH="/Users/sjanes/.oh-my-zsh"
+# Path to your Oh My Zsh installation.
+export ZSH="$HOME/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
-# load a random theme each time oh-my-zsh is loaded, in which case,
+# load a random theme each time Oh My Zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="robbyrussell"
+ZSH_THEME="agnoster"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -89,18 +89,23 @@ source $ZSH/oh-my-zsh.sh
 # fi
 
 # Compilation flags
-# export ARCHFLAGS="-arch x86_64"
+# export ARCHFLAGS="-arch $(uname -m)"
 
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
+# Set personal aliases, overriding those provided by Oh My Zsh libs,
+# plugins, and themes. Aliases can be placed here, though Oh My Zsh
+# users are encouraged to define aliases within a top-level file in
+# the $ZSH_CUSTOM folder, with .zsh extension. Examples:
+# - $ZSH_CUSTOM/aliases.zsh
+# - $ZSH_CUSTOM/macos.zsh
 # For a full list of active aliases, run `alias`.
 #
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-source <(/Users/sjanes/.cargo/bin/starship init zsh --print-full-init)
-source /Users/sjanes/.config/broot/launcher/bash/br
+
+PATH=$PATH:~/.cargo/bin
+source <($HOME/.cargo/bin/starship init zsh --print-full-init)
+source $HOME/.config/broot/launcher/bash/br
 git config --global alias.slog 'log --pretty=oneline --abbrev-commit'
 export EDITOR=nvim
 
@@ -127,20 +132,9 @@ export PATH=$PATH:/opt/local/bin:/opt/local/sbin
 export TERMINAL=kitty
 alias mp="mkdir -p"
 
-# Wasmer
-export WASMER_DIR="/Users/sjanes/.wasmer"
-[ -s "$WASMER_DIR/wasmer.sh" ] && source "$WASMER_DIR/wasmer.sh"
-eval "$(direnv hook bash)"
-
-export CPLUS_INCLUDE_PATH=/opt/homebrew/Cellar/boost/1.79.0_2/include/
-
 source /Users/sjanes/.docker/init-zsh.sh || true # Added by Docker Desktop
-      
-export cdj
+eval "$(direnv hook zsh)"
 export PATH="/opt/homebrew/bin:/opt/homebrew/opt/postgresql@15/bin:$PATH"
-export PLAN9=/Users/sjanes/tmp/plan9
-export PATH=$PATH:$PLAN9/bin
-
 _direnv_hook() {
   trap -- '' SIGINT;
   eval "$("/opt/homebrew/bin/direnv" export zsh)";
@@ -158,26 +152,20 @@ eval "$(zoxide init zsh)"
 eval "$(atuin init zsh)"
 cdj() {
     # Update with your document root folder
-    __zoxide_z ~/Documents/JD/*/*/${1}*
+    __zoxide_z ~/JD/*/*/${1}*
 }
 cdc() {
     # Update with your document root folder
-    __zoxide_z ~/Documents/JD/*/${1}*
+    __zoxide_z ~/JD/*/${1}*
 }
+export cdj
+export cdc
+
 export PATH=$PATH:~/bin
 export PATH=$PATH:~/.config/emacs/bin
 
 # Created by `pipx` on 2024-06-23 05:13:06
-export PATH="$PATH:/Users/sjanes/.local/bin"
+export PATH="$PATH:$HOME/.local/bin"
 if [ -f "/Users/sjanes/.config/fabric/fabric-bootstrap.inc" ]; then . "/Users/sjanes/.config/fabric/fabric-bootstrap.inc"; fi
 
 alias fzn="nvim \$(fzf -m --preview 'bat --color=always --style=header,grid --line-range :500 {}' --preview-window=right:70%:wrap)"
-
-# Load pyenv automatically by appending
-# the following to
-# ~/.zprofile (for login shells)
-# and ~/.zshrc (for interactive shells) :
-
-export PYENV_ROOT="$HOME/.pyenv"
-[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
