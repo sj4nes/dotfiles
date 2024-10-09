@@ -5,12 +5,20 @@ options = { noremap = true }
 vim.api.nvim_set_keymap("n", "<leader>!", ":BaconLoad<CR>:w<CR>:BaconNext<CR>", options)
 vim.api.nvim_set_keymap("n", "<leader>,", ":BaconLoad<CR>:BaconList<CR>", options)
 vim.api.nvim_set_keymap("n", "<leader>F", ":Telescope find_files hidden=true<cr>", options)
+vim.api.nvim_set_keymap("n", "<leader>O", ":ObsidianQuickSwitch<cr>", options)
 vim.api.nvim_set_keymap("n", "<leader>b", ":Telescope buffers<cr>", options)
+vim.api.nvim_set_keymap("n", "<leader>cc", ":CompilerToggleResults<cr>", options)
+vim.api.nvim_set_keymap("n", "<leader>co", ":CompilerOpen<cr>", options)
+vim.api.nvim_set_keymap("n", "<leader>cr", ":CompilerStop<cr>:CompilerRedo<cr>", options)
 vim.api.nvim_set_keymap("n", "<leader>f", ":Telescope find_files<cr>", options)
 vim.api.nvim_set_keymap("n", "<leader>g", ":Neogit<cr>", options)
+vim.api.nvim_set_keymap("n", "<leader>i", ":lua vim.lsp.inlay_hint.enable(true, { 0 })<CR>", options)
 vim.api.nvim_set_keymap("n", "<leader>l", ":Telescope live_grep<cr>", options)
 vim.api.nvim_set_keymap("n", "<leader>n", ":nohlsearch<cr>", options)
-vim.api.nvim_set_keymap("n", "<leader>o", ":ObsidianQuickSwitch<cr>", options)
+vim.api.nvim_set_keymap("n", "<leader>o", ":Oil<cr>", options)
+vim.api.nvim_set_keymap("n", "<leader>t", ":TodoTelescope<cr>", options)
+vim.api.nvim_set_keymap("n", "<leader>w", ":w<cr>", options)
+vim.api.nvim_set_keymap("n", "<leader>z", "zA", options)
 
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
 	vim.fn.system({
@@ -24,31 +32,50 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 local plugins = {
+	{ -- This plugin
+		"Zeioth/compiler.nvim",
+		cmd = { "CompilerOpen", "CompilerToggleResults", "CompilerRedo" },
+		dependencies = { "stevearc/overseer.nvim", "nvim-telescope/telescope.nvim" },
+		opts = {},
+	},
+	{ -- The task runner we use
+		"stevearc/overseer.nvim",
+		commit = "6271cab7ccc4ca840faa93f54440ffae3a3918bd",
+		cmd = { "CompilerOpen", "CompilerToggleResults", "CompilerRedo" },
+		opts = {
+			task_list = {
+				direction = "bottom",
+				min_height = 25,
+				max_height = 25,
+				default_detail = 1,
+			},
+		},
+	},
 	{
-		'VonHeikemen/lsp-zero.nvim',
-		branch = 'v4.x',
+		"VonHeikemen/lsp-zero.nvim",
+		branch = "v4.x",
 		lazy = true,
 		config = false,
 	},
 
 	-- Autocompletion
 	{
-		'hrsh7th/nvim-cmp',
-		event = 'InsertEnter',
+		"hrsh7th/nvim-cmp",
+		event = "InsertEnter",
 		dependencies = {
-			{'L3MON4D3/LuaSnip'},
+			{ "L3MON4D3/LuaSnip" },
 		},
 		config = function()
-			local cmp = require('cmp')
+			local cmp = require("cmp")
 
 			cmp.setup({
 				sources = {
-					{name = 'nvim_lsp'},
+					{ name = "nvim_lsp" },
 				},
 				mapping = cmp.mapping.preset.insert({
-					['<C-Space>'] = cmp.mapping.complete(),
-					['<C-u>'] = cmp.mapping.scroll_docs(-4),
-					['<C-d>'] = cmp.mapping.scroll_docs(4),
+					["<C-Space>"] = cmp.mapping.complete(),
+					["<C-u>"] = cmp.mapping.scroll_docs(-4),
+					["<C-d>"] = cmp.mapping.scroll_docs(4),
 				}),
 				snippet = {
 					expand = function(args)
@@ -56,48 +83,49 @@ local plugins = {
 					end,
 				},
 			})
-		end
+		end,
 	},
 
 	-- LSP
 	{
-		'neovim/nvim-lspconfig',
-		cmd = 'LspInfo',
-		event = {'BufReadPre', 'BufNewFile'},
+		"neovim/nvim-lspconfig",
+		cmd = "LspInfo",
+		event = { "BufReadPre", "BufNewFile" },
 		dependencies = {
-			{'hrsh7th/cmp-nvim-lsp'},
+			{ "hrsh7th/cmp-nvim-lsp" },
 		},
 		config = function()
-			local lsp_zero = require('lsp-zero')
+			local lsp_zero = require("lsp-zero")
 
 			-- lsp_attach is where you enable features that only work
 			-- if there is a language server active in the file
 			local lsp_attach = function(client, bufnr)
-				local opts = {buffer = bufnr}
+				local opts = { buffer = bufnr }
 
-				vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
-				vim.keymap.set('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
-				vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
-				vim.keymap.set('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
-				vim.keymap.set('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
-				vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
-				vim.keymap.set('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
-				vim.keymap.set('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
-				vim.keymap.set({'n', 'x'}, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
-				vim.keymap.set('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
+				vim.keymap.set("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
+				vim.keymap.set("n", "gd", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
+				vim.keymap.set("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
+				vim.keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
+				vim.keymap.set("n", "go", "<cmd>lua vim.lsp.buf.type_definition()<cr>", opts)
+				vim.keymap.set("n", "gr", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
+				vim.keymap.set("n", "gs", "<cmd>lua vim.lsp.buf.signature_help()<cr>", opts)
+				vim.keymap.set("n", "<F2>", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
+				vim.keymap.set({ "n", "x" }, "<F3>", "<cmd>lua vim.lsp.buf.format({async = true})<cr>", opts)
+				vim.keymap.set("n", "<F4>", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
 			end
 
 			lsp_zero.extend_lspconfig({
 				sign_text = true,
 				lsp_attach = lsp_attach,
-				capabilities = require('cmp_nvim_lsp').default_capabilities()
+				capabilities = require("cmp_nvim_lsp").default_capabilities(),
 			})
 
 			-- These are just examples. Replace them with the language
 			-- servers you have installed in your system
-			require('lspconfig').gleam.setup({})
-			require('lspconfig').ocamllsp.setup({})
-		end
+			require("lspconfig").gleam.setup({})
+			require("lspconfig").ocamllsp.setup({})
+			require("lspconfig").zls.setup({})
+		end,
 	},
 	{
 		"mistricky/codesnap.nvim",
@@ -213,9 +241,7 @@ local plugins = {
 		columns = {
 			"icon",
 		},
-		opts = {
-
-		},
+		opts = {},
 		-- Optional dependencies
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 	},
@@ -236,6 +262,19 @@ local plugins = {
 			-- or leave it empty to use the default settings
 			-- refer to the configuration section below
 		},
+		config = function()
+			vim.keymap.set("n", "]t", function()
+				require("todo-comments").jump_next()
+			end, { desc = "Next todo comment" })
+
+			vim.keymap.set("n", "[t", function()
+				require("todo-comments").jump_prev()
+			end, { desc = "Previous todo comment" })
+
+			require("todo-comments").setup({
+				exclude = { "node_modules", "vendor", "archive-rust", "deps" },
+			})
+		end,
 	},
 	-- { "mrcjkb/rustaceanvim", version = "^5", -- Recommended lazy = false, ft = { "rust" }, },
 }
@@ -391,52 +430,46 @@ cmp.setup({
 })
 vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
-require('nvim-treesitter.configs').setup({
-    ensure_installed = "yaml",
-    highlight = {
-        enable = true,
-    },
-    indent = {
-        enable = true,
-    },
+require("nvim-treesitter.configs").setup({
+	ensure_installed = { "yaml", "elixir", "eex", "heex" },
+	highlight = {
+		enable = true,
+	},
+	indent = {
+		enable = true,
+	},
 })
 
 local bufnr = vim.api.nvim_get_current_buf()
-vim.keymap.set(
-  "n", 
-  "<leader>a", 
-  function()
-    vim.cmd.RustLsp('codeAction') -- supports rust-analyzer's grouping
-    -- or vim.lsp.buf.codeAction() if you don't want grouping.
-  end,
-  { silent = true, buffer = bufnr }
-)
+vim.keymap.set("n", "<leader>a", function()
+	vim.cmd.RustLsp("codeAction") -- supports rust-analyzer's grouping
+	-- or vim.lsp.buf.codeAction() if you don't want grouping.
+end, { silent = true, buffer = bufnr })
 
 vim.g.neovide_scale_factor = 1.0
 local change_scale_factor = function(delta)
-  vim.g.neovide_scale_factor = vim.g.neovide_scale_factor * delta
+	vim.g.neovide_scale_factor = vim.g.neovide_scale_factor * delta
 end
 vim.keymap.set("n", "<C-=>", function()
-  change_scale_factor(1.25)
+	change_scale_factor(1.25)
 end)
 vim.keymap.set("n", "<C-->", function()
-  change_scale_factor(1/1.25)
+	change_scale_factor(1 / 1.25)
 end)
 
-lsp = require('lsp-zero')
+lsp = require("lsp-zero")
 
-lsp.configure('rust_analyzer', {
-    settings = {
-        ["rust-analyzer"] = {
-            inlayHints = {
-                enable = true,
-                showParameterNames = true,
-                parameterHintsPrefix = "<- ",
-                otherHintsPrefix = "=> ",
-            },
-        },
-    },
+lsp.configure("rust_analyzer", {
+	settings = {
+		["rust-analyzer"] = {
+			inlayHints = {
+				enable = true,
+				showParameterNames = true,
+				parameterHintsPrefix = "<- ",
+				otherHintsPrefix = "=> ",
+			},
+		},
+	},
 })
 
 lsp.setup()
-
