@@ -11,7 +11,7 @@
   "flash.nvim": { "branch": "main", "commit": "34c7be146a91fec3555c33fe89c7d643f6ef5cf1" },
   "formatter.nvim": { "branch": "master", "commit": "b0edd69cec589bb65930cb15ab58b7e61d9a7e70" },
   "fzf-lua": { "branch": "main", "commit": "1e03541de4d8a169defe83bb4d7abfba450c63a1" },
-  "lazy.nvim": { "branch": "main", "commit": "1159bdccd8910a0fd0914b24d6c3d186689023d9" },
+  "lazy.nvim": { "branch": "main", "commit": "077102c5bfc578693f12377846d427f49bc50076" },
   "lsp-zero.nvim": { "branch": "v4.x", "commit": "0dfe4fe80c2d08f2e88415266f56ef630d458e34" },
   "mason.nvim": { "branch": "main", "commit": "e2f7f9044ec30067bc11800a9e266664b88cda22" },
   "neogit": { "branch": "master", "commit": "a8dd1509a7fc6bf92ca60f21e33393f685ab70aa" },
